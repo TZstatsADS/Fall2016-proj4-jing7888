@@ -63,14 +63,33 @@ train_data_prob <- function(feature,num_cluster,lyric_train){
 
 # use features to calculate pro matrix
 bars_result <- train_data_prob(bars_start,5,lyric_train)
+beats_result <- train_data_prob(beats_start,5,lyric_train)
+sections_result <- train_data_prob(sections_start,5,lyric_train)
+segments_result <- train_data_prob(segments_start,5,lyric_train)
+segments_l_m_result <- train_data_prob(segments_l_m,5,lyric_train)
+#segments_l_m_t_result <- train_data_prob(segments_l_m_t,5,lyric_train)
+segments_l_s_result <- train_data_prob(segments_l_s,5,lyric_train)
+segments_p_result <- train_data_prob(segments_p,5,lyric_train)
+segments_t_result <- train_data_prob(segments_t,5,lyric_train)
+tatums_s_result <- train_data_prob(tatums_s,5,lyric_train)
+
+
+
 # save the matrix
 save(bars_result, file = paste(data_output_path, "/bars_result.RData", sep=""))
+save(beats_result, file = paste(data_output_path, "/beats_result.RData", sep=""))
+save(sections_result, file = paste(data_output_path, "/sections_result.RData", sep=""))
+save(segments_result, file = paste(data_output_path, "/segments_result.RData", sep=""))
+save(segments_l_m_result, file = paste(data_output_path, "/segments_l_m_result.RData", sep=""))
+#save(segments_l_m_t_result, file = paste(data_output_path, "/segments_l_m_t_result.RData", sep=""))
+save(segments_l_s_result, file = paste(data_output_path, "/segments_l_s_result.RData", sep=""))
+save(segments_p_result, file = paste(data_output_path, "/segments_p_result.RData", sep=""))
+save(segments_t_result, file = paste(data_output_path, "/segments_t_result.RData", sep=""))
+save(tatums_s_result, file = paste(data_output_path, "/tatums_s_reuslt.RData", sep=""))
 
 
-
-# a function to predict the cluster and calculate probability#
-# 5* 4973 matrix. input    350*4973
-
+# a function to predict the cluster and calculate probability
+################ use one feature to predict the cluster and calculate probability ################ 
 feature <- bars_start
 feature[["train"]] <- TRUE
 feature[["train"]][ind] <- FALSE
@@ -96,5 +115,62 @@ prob_bars <- test_prob$pred_prob
 # final result
 rank_bars<-apply(-prob_bars,1,rank)
 rank_bars <- round(rank_bars)
+save(rank_bars,file = paste(data_output_path, "/rank_bars.RData", sep=""))
+########### end of using one feature to predict the cluster and calculate probability ###########
+
+############## combine all feature to predict the cluster and calculate probability ##############
+feature <- bars_start
+feature[["train"]] <- TRUE
+feature[["train"]][ind] <- FALSE
+
+
+new_feature<-feature[feature[["train"]]==FALSE,1:(ncol(feature)-1)]
+
+
+test_data_prob <- function(newfeature,train_result){
+  feature <- newfeature
+  pred_test <- predict(train_result$model,newfeature)
+  # it's a vector of labels for new data
+  pred_prob <- matrix(NA, nrow = nrow(newfeature),ncol = 4973)
+  for(i in 1:nrow(newfeature)){
+    temp_clus <- pred_test[i]
+    prob <- train_result$result[temp_clus,]
+    pred_prob[i,] <- prob
+  }
+  return(list("cluster"=pred_test,"pred_prob"=pred_prob))
+}
+
+# 
+prob1<-test_data_prob(new_feature,bars_result)
+prob11 <- prob1$pred_prob
+prob2<-test_data_prob(new_feature,beats_result)
+prob22 <- prob2$pred_prob
+prob3<-test_data_prob(new_feature,sections_result)
+prob33 <- prob3$pred_prob
+prob4<-test_data_prob(new_feature,segments_result)
+prob44 <- prob4$pred_prob
+prob5<-test_data_prob(new_feature,segments_l_m_result)
+prob55 <- prob5$pred_prob
+prob6<-test_data_prob(new_feature,segments_l_s_result)
+prob66 <- prob6$pred_prob
+prob7<-test_data_prob(new_feature,segments_p_result)
+prob77 <- prob7$pred_prob
+prob8<-test_data_prob(new_feature,segments_t_result)
+prob88 <- prob8$pred_prob
+prob9<-test_data_prob(new_feature,tatums_s_result)
+prob99 <- prob9$pred_prob
+
+all_feature_prob <-log(prob11)+log(prob22)+log(prob33)+log(prob44)+log(prob55)
+all_feature_prob <-all_feature_prob+log(prob66)+log(prob77)+log(prob88)+log(prob99)
+
+# final result
+rank_all<-apply(-all_feature_prob,1,rank)
+rank_all <- round(rank_all)
+# dim(rank_bars) is 4973*350(then number of words*the number of testing songs)
+
+save(rank_all,file = paste(data_output_path, "/rank_all.RData", sep=""))
+
+
+
 
 

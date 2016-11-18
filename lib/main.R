@@ -166,10 +166,10 @@ all_feature_prob <-all_feature_prob+log(prob66)+log(prob77)+log(prob88)+log(prob
 # final result
 rank_all<-apply(-all_feature_prob,1,rank)
 rank_all <- round(rank_all)
-# dim(rank_bars) is 4973*350(then number of words*the number of testing songs)
+# dim(rank_all) is 4973*350(then number of words*the number of testing songs)
 
 save(rank_all,file = paste(data_output_path, "/rank_all.RData", sep=""))
-
+ 
 
 
 

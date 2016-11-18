@@ -30,38 +30,18 @@ for(i in 1:file_num){
   }
 }
 # output
-bars_dim <- floor(median(data.bars)*1.5) #180
+# we dicide to use the 0.75 quantile of the the average length.
+bars_dim <- floor(median(data.bars)*1.5) #178
 beats_dim <- floor(median(data.beats)*1.5) #669
 sec_dim <- floor(median(data.sec)*1.5) #13
 seg_dim <- floor(median(data.seg)*1.5) #1116
-tat_dim <- floor(median(data.tat)*1.5) #1474
+tat_dim <- floor(median(data.tat)*1.5) #1473
+# bars_dim;
 
 
 
 
-### check whether songs in training set have 0 dim features ###
-for(i in 1:file_num){
-  data <- h5read(file_names[i], "analysis")
-  H5close()
-  if(length(data$bars_confidence) == 0){
-    data$bars_start == rep(0, bars_dim)
-  }
-  if(length(data$beats_confidence) == 0){
-    data$beats_start == rep(0, beats_dim)
-  }
-  if(length(data$sections_confidence) == 0){
-    data$sections_start == rep(0, sec_dim)
-  }
-  if(length(data$segments_confidence) == 0){
-    data$segments_start == rep(0, seg_dim)
-  }
-  if(length(data$tatums_confidence) == 0){
-    data$tatums_start == rep(0, tat_dim)
-  }
-}
-
-
-### define feature processing functions ###
+# define feature processing functions 
 feature_truncate_1d <- function(ls, len){
   if(length(ls) >= len){
     ls <- ls[1:len]
@@ -102,35 +82,56 @@ segments_p <-matrix(NA,nrow = file_num, ncol=13392)
 segments_t <-matrix(NA,nrow = file_num, ncol=13392)
 tatums_s <-matrix(NA,nrow = file_num, ncol=tat_dim)
 
+# save the features as matrix
 t1 <- Sys.time()
 for(i in 1:file_num){
     data <- h5read(file_names[i], "analysis")
     H5close()
+    if(length(data$bars_confidence) == 0){
+      data$bars_start <- rep(0, bars_dim)
+    }
+    if(length(data$beats_confidence) == 0){
+      data$beats_start <- rep(0, beats_dim)
+    }
+    if(length(data$sections_confidence) == 0){
+      data$sections_start <- rep(0, sec_dim)
+    }
+    if(length(data$segments_confidence) == 0){
+      data$segments_start <- rep(0, seg_dim)
+    }
+    if(length(data$tatums_confidence) == 0){
+      data$tatums_start <- rep(0, tat_dim)
+    }
     song_id <- substring(file_names[i], 7, 24)
-    bars_s[i,] <- feature_truncate_1d(data$bars_start, 180)
-    beats_s[i,] <- feature_truncate_1d(data$beats_start, 669)
-    sections_s[i,] <- feature_truncate_1d(data$sections_start, 13)
-    segments_s[i,] <- feature_truncate_1d(data$segments_start, 1116)
-    segments_l_m[i,] <- feature_truncate_1d(data$segments_loudness_max, 1116)
-    segments_l_m_t[i,] <- feature_truncate_1d(data$segments_loudness_max_time, 1116)
-    segments_l_s[i,] <- feature_truncate_1d(data$segments_loudness_start, 1116)
-    segments_p[i,] <- feature_truncate_2d(data$segments_pitches, 1116)
-    segments_t[i,] <- feature_truncate_2d(data$segments_timbre, 1116)
-    tatums_s[i,] <- feature_truncate_1d(data$tatums_start, 1474)
+    bars_s[i,] <- feature_truncate_1d(data$bars_start, bars_dim)
+    beats_s[i,] <- feature_truncate_1d(data$beats_start, beats_dim)
+    sections_s[i,] <- feature_truncate_1d(data$sections_start, sec_dim)
+    segments_s[i,] <- feature_truncate_1d(data$segments_start, seg_dim)
+    segments_l_m[i,] <- feature_truncate_1d(data$segments_loudness_max, seg_dim)
+    segments_l_m_t[i,] <- feature_truncate_1d(data$segments_loudness_max_time,seg_dim)
+    segments_l_s[i,] <- feature_truncate_1d(data$segments_loudness_start, seg_dim)
+    segments_p[i,] <- feature_truncate_2d(data$segments_pitches, seg_dim)
+    segments_t[i,] <- feature_truncate_2d(data$segments_timbre, seg_dim)
+    tatums_s[i,] <- feature_truncate_1d(data$tatums_start, tat_dim)
   }
 t2 <- Sys.time()
 time1 <- t2 - t1
 
+# save all the features for further use.
+save(bars_s, file = paste(data_output_path, "/bars_s.RData", sep=""))
+save(beats_s, file = paste(data_output_path, "/beats_s.RData", sep=""))
+save(sections_s, file = paste(data_output_path, "/sections_s.RData", sep=""))
+save(segments_s, file = paste(data_output_path, "/segments_s.RData", sep=""))
+save(segments_l_m, file = paste(data_output_path, "/segments_l_m.RData", sep=""))
+save(segments_l_m_t, file = paste(data_output_path, "/segments_l_m_t.RData", sep=""))
+save(segments_l_s, file = paste(data_output_path, "/segments_l_s.RData", sep=""))
+save(segments_p, file = paste(data_output_path, "/segments_p.RData", sep=""))
+save(segments_t, file = paste(data_output_path, "/segments_t.RData", sep=""))
+save(tatums_s, file = paste(data_output_path, "/tatums_s.RData", sep=""))
+
+# check whether the feature has missing values
+# which(is.na(tatums_s))
 
 
-write.csv(bars_s, file = paste(data_output_path, "/bars_s.csv", sep=""))
-write.csv(beats_s, file = paste(data_output_path, "/beats_s.csv", sep=""))
-write.csv(sections_s, file = paste(data_output_path, "/sections_s.csv", sep=""))
-write.csv(segments_s, file = paste(data_output_path, "/segments_s.csv", sep=""))
-write.csv(segments_l_m, file = paste(data_output_path, "/segments_l_m.csv", sep=""))
-write.csv(segments_l_m_t, file = paste(data_output_path, "/segments_l_m_t.csv", sep=""))
-write.csv(segments_l_s, file = paste(data_output_path, "/segments_l_s.csv", sep=""))
-write.csv(segments_p, file = paste(data_output_path, "/segments_p.csv", sep=""))
-write.csv(segments_t, file = paste(data_output_path, "/segments_t.csv", sep=""))
-write.csv(tatums_s, file = paste(data_output_path, "/tatums_s.csv", sep=""))
+
 

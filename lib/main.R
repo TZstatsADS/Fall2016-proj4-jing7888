@@ -1,19 +1,19 @@
 # main part
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/lyr.RData")
+load("./data/lyr.RData")
 lyric=lyr[,-c(1,2,3,6:30)]
 
 
 # now we will use random forest to do multiple classification
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/bars_s.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/beats_s.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/sections_s.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/segments_s.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/segments_l_m.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/segments_l_m_t.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/segments_l_s.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/segments_p.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/segments_t.RData")
-load("/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata/tatums_s.RData")
+load("./output/bars_s.RData")
+load("./output/beats_s.RData")
+load("./output/sections_s.RData")
+load("./output/segments_s.RData")
+load("./output/segments_l_m.RData")
+load("./output/segments_l_m_t.RData")
+load("./output/segments_l_s.RData")
+load("./output/segments_p.RData")
+load("./output/segments_t.RData")
+load("./output/tatums_s.RData")
 
 
 bars_start <- as.data.frame(bars_s)

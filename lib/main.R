@@ -4,19 +4,30 @@ lyric=lyr[,-c(1,2,3,6:30)]
 
 
 # now we will use random forest to do multiple classification
-load("./output/bars_s.RData")
-load("./output/beats_s.RData")
-load("./output/sections_s.RData")
-load("./output/segments_s.RData")
-load("./output/segments_l_m.RData")
-load("./output/segments_l_m_t.RData")
-load("./output/segments_l_s.RData")
-load("./output/segments_p.RData")
-load("./output/segments_t.RData")
-load("./output/tatums_s.RData")
+load("./data/bars_s.RData")
+load("./data/beats_s.RData")
+load("./data/sections_s.RData")
+load("./data/segments_s.RData")
+load("./data/segments_l_m.RData")
+load("./data/segments_l_m_t.RData")
+load("./data/segments_l_s.RData")
+load("./data/segments_p.RData")
+load("./data/segments_t.RData")
+load("./data/tatums_s.RData")
 
 
+# set them to data.frame
 bars_start <- as.data.frame(bars_s)
+beats_start <- as.data.frame(beats_s)
+sections_start <- as.data.frame(sections_s)
+segments_start <- as.data.frame(segments_s)
+segments_l_m <- as.data.frame(segments_l_m)
+segments_l_m_t <- as.data.frame(segments_l_m_t)
+segments_l_s <- as.data.frame(segments_l_s)
+segments_p <- as.data.frame(segments_p)
+segments_t <- as.data.frame(segments_t)
+tatums_s <- as.data.frame(tatums_s)
+
 set.seed(123)
 
 ind <- sample(2350,350)
@@ -48,10 +59,14 @@ train_data_prob <- function(feature,num_cluster,lyric_train){
   for(i in 1:num_cluster){
     row <- lyric4label[,dim(lyric4label)[2]]==i
     temp <- lyric4label[row,1:(ncol(lyric4label)-1)]
+    # if the word appears in one song, we set it's count in this song as 1
     temp[temp > 0]<-1
     for(j in 1:(ncol(lyric4label)-1)){
+      # Define the probability of the a specific word in a specific cluster as:
+      # how many songs the word appears in/ the number of the songs in this cluster. 
       result[i,j] <- sum(temp[,j])/dim(temp)[1]
       if(result[i,j]==0){
+        # for further calculation, we set the 0 to 0.0001
         result[i,j] <- 0.0001
       }
     }
@@ -61,7 +76,7 @@ train_data_prob <- function(feature,num_cluster,lyric_train){
 
 
 
-# use features to calculate pro matrix
+# use features to calculate pro matrix. The number of clusters can be changed.
 bars_result <- train_data_prob(bars_start,5,lyric_train)
 beats_result <- train_data_prob(beats_start,5,lyric_train)
 sections_result <- train_data_prob(sections_start,5,lyric_train)
@@ -122,11 +137,10 @@ save(rank_bars,file = paste(data_output_path, "/rank_bars.RData", sep=""))
 feature <- bars_start
 feature[["train"]] <- TRUE
 feature[["train"]][ind] <- FALSE
-
-
 new_feature<-feature[feature[["train"]]==FALSE,1:(ncol(feature)-1)]
 
 
+# for new testing data, just use the result from the feature_extract.R and set them to data.frame.
 test_data_prob <- function(newfeature,train_result){
   feature <- newfeature
   pred_test <- predict(train_result$model,newfeature)

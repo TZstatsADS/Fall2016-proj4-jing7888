@@ -2,9 +2,10 @@
 #biocLite("rhdf5")
 library(rhdf5)
 # set working path to training/test data folder
-train_data_path <- "/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/data"
+# when reimplement the code, set the directory to where you store H5 data.
+train_data_path <- "./data/Project4_data/data"
 test_data_path <- ""
-data_output_path <- "/Users/Amyummy/Documents/Rstudio/ads_pro4/Project4_data/outputdata"
+data_output_path <- "./output"
 setwd(train_data_path)
 file_names <- list.files(recursive = T)
 file_num <- length(file_names)

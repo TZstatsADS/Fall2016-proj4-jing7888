@@ -10,7 +10,7 @@ Term: Fall 2016
 + [Data description](doc/readme.html)
 + Contributor's name: Jingjing Feng
 + Projec title: Music and text mining
-+ Project summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
++ Project summary: In this project, I used H5 file and lyrics of 2350 songs to build an model to predict the probability of 5000 words. I used the 10 features from the H5 file and used K means to do clustering using these features. Then we can rank the probabilities of the words in each cluster.
 
 + How to run this code: Given H5 files of music, use the feature_extract.R to extract features from all the H5 file. Then use the main.R to calculate the rank of the probabilities of all the words.
 

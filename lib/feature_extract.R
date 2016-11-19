@@ -5,7 +5,7 @@ library(rhdf5)
 # when reimplement the code, set the directory to where you store H5 data.
 train_data_path <- "./data/Project4_data/data"
 test_data_path <- ""
-data_output_path <- "./output"
+data_output_path <- "./data"
 setwd(train_data_path)
 file_names <- list.files(recursive = T)
 file_num <- length(file_names)

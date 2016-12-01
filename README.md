@@ -11,7 +11,8 @@ Term: Fall 2016
 + Contributor's name: Jingjing Feng
 + Projec title: Music and text mining
 + Project summary: In this project, I used H5 file and lyrics of 2350 songs to build an model to predict the probability of 5000 words. I used the 10 features from the H5 file and used K means to do clustering using these features. Then we can rank the probabilities of the words in each cluster.
-**Steps:
+
++ **Steps**:
 
 + Step 1: The first step is to extract features from H5 files. I use all of the feathers in Group “analysis” except songs and every feathers related to confidence. Then I saved those features indivisually instead of combining them togather as just one vector.
 
@@ -22,7 +23,7 @@ Term: Fall 2016
 + Step 4: The final step is to use features from the testing dataset to predict the cluster and calculate the probability of each words. Then we can rank all the words based on their probability. Actually, I combined the result calculated by all the features together to make use of as much information as I can.
 
 
-**How to run my code: 
++ **How to run my code**: 
 
 + Given H5 files of music, use the feature_extract.R to extract features from all the H5 file. Then use the main.R to calculate the rank of the probabilities of all the words.
 
